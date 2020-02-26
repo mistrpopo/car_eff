@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+  <head>
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type' />  
+    <title>Car efficiency</title>
+    <script src="Sankey/ext/raphael.js" type="text/javascript"></script>
+    <script src="Sankey/ext/jquery.js" type="text/javascript"></script>
+    <script src="Sankey/js/sankey.js" type="text/javascript"></script>    
+	<link rel="stylesheet" href="Sankey/examples/css/style.css" />
+  </head>
+  <body>
+    <script type='text/javascript'>
+      $(document).ready(function() {
+        var sankey = new Sankey();
+        
+        var petrol = "Petroleum";
+        var waste = "Waste heat";
+        var move = "Movement";
+        var moveCar = "Move the car";
+        var moveHuman = "Move the human";
+
+        var iceGasolineEfficiency = 0.2; //20%
+        var iceDieselEfficiency = 0.3; //30%
+        var carWeight = 1165; //ford fiesta
+        var humanWeight = 70;
+
+        var engineEfficiency = iceGasolineEfficiency;
+
+        var contentWeight = humanWeight * 1;
+        var weightEfficiency = contentWeight / (contentWeight + carWeight);
+
+        sankey.stack(0,[petrol]);
+        sankey.stack(1,[move]);
+        sankey.stack(2,[waste, moveCar,moveHuman]);
+        
+        var petrol2waste   = (1 - engineEfficiency) * 100;
+        petrol2waste = Math.round(petrol2waste*100)/100;
+        var petrol2move    = engineEfficiency * 100;
+        petrol2move = Math.round(petrol2move*100)/100;
+        var move2moveCar   = engineEfficiency * (1 - weightEfficiency) * 100;
+        move2moveCar = Math.round(move2moveCar*100)/100;
+        var move2moveHuman = engineEfficiency * weightEfficiency * 100;
+        move2moveHuman = Math.round(move2moveHuman*100)/100;
+
+        sankey.convert_flow_values_callback = function(perc) {
+          return perc * 500 / 100; // Pixels per %
+        };
+        var rawData = 
+          [
+            [petrol , petrol2waste , waste],
+            [petrol , petrol2move , move],
+            [move , move2moveCar , moveCar],
+            [move , move2moveHuman , moveHuman]
+          ];
+
+
+        //todo this doesn't work
+        sankey.setColors({
+          petrol:"#FF0000",
+          // waste:"#FFFF00", 
+          move:"#00FF00"
+          //moveHuman:"#0000FF"
+        });
+
+        //this does
+        sankey.nudge_colours_callback = function() {
+          this.recolour(this.boxes[waste].left_lines,"#AAAAAA");
+          this.recolour(this.boxes[moveCar].left_lines,"#AA5555");
+          this.recolour(this.boxes[move].left_lines,"#55AA55");
+          this.recolour(this.boxes[moveHuman].left_lines,"#55FF55");
+        };
+      
+        sankey.left_margin = 100; //todo strange margin accounting here
+        sankey.right_margin = 200;
+        sankey.y_space = 20;
+        sankey.box_width = 30;
+        
+        // Nudge
+        sankey.nudge_boxes_callback = function() {
+          sankey.boxes[move].y = (sankey.boxes[petrol].b() - sankey.boxes[move].size() + sankey.y_space);       
+          //sankey.boxes[moveHuman].y = (sankey.boxes[petrol].b() - sankey.boxes[moveHuman].size());       
+        }
+
+        sankey.setData(rawData);
+        sankey.draw();
+        
+        document.getElementById('finalEnergy').innerText = move2moveHuman.toString() + '%';
+        
+        document.getElementById('sankey').style.backgroundImage = "url('Sankey/examples/css/images/ford-fiesta.png')";
+      
+    });
+      
+    </script>
+    <h1 class='sankeyHeight' style='text-align: center; margin-bottom: 0'>Car efficiency</h1>
+    <div class='sankeyHeight' style='text-align: center; margin-top: 0'>Only <span id='finalEnergy'>1%</span> of the energy consumed is used to move the driver</div>
+    <div id='sankey' class='sankeyHeight' style='height:1000px'>
+      &nbsp;
+    </div>
+  </body>
+</html>
