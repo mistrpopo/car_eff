@@ -32,7 +32,7 @@ Licence: MIT Open Source licence http://www.opensource.org/licenses/mit-license.
       this.bubbles = [];
       this.bubbleColor = '#000';
       this.bubbleLabelColor = '#fff';
-      this.opacity = '1.0';
+      this.opacity = '0.7';
       this.opacity_highlight = '0.1';
     }
 
@@ -481,6 +481,10 @@ Licence: MIT Open Source licence http://www.opensource.org/licenses/mit-license.
       this.right_lines = [];
       this.x = 0;
       this.y = 0;
+      this.box_colour = "#000";
+      this.box_opacity = sankey.opacity;
+      this.stroke_colour = "#E8E2FF";
+      this.stroke_opacity = sankey.opacity;
       this.bubbleValue = null;
     }
 
@@ -641,8 +645,10 @@ Licence: MIT Open Source licence http://www.opensource.org/licenses/mit-license.
       }
       box_width = this.sankey.box_width;
       this.box = r.rect(this.x, this.y, box_width, this.size()).attr({
-        'fill': "#E8E2FF",
-        "stroke": "#D4CBF2"
+        'fill': this.box_colour,
+        'fill-opacity': this.box_opacity,
+        "stroke": this.stroke_colour,
+        'stroke-opacity': this.stroke_opacity
       });
       this.label = r.text(this.labelPositionX(), this.labelPositionY(), this.descriptionLabelText()).attr(this.labelAttributes());
       if (this.bubbleValue != null) {

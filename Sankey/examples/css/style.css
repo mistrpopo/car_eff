@@ -10,8 +10,86 @@
 	transition: all 0.75s;
 }
 
-.sankeyHeight {
-	width: 1600px;
-	margin-left: auto;
-	margin-right: auto;
+#titleContainer {
+	display: flex;
+	align-items: center;
+	margin-bottom: 0;
+	background-color: #505050;
+	height: 2.5em;
+	font-size: 150%;
+}
+
+#titleContent {
+	margin-left: 1em;
+	color: #ffdab9;
+}
+
+#subContainer {
+	display: flex;
+	align-items: center;
+	margin-bottom: 0;
+	background-color: #ffead4;
+	height: 2em;
+}
+
+#subContent {
+	margin-left: 1.5em;
+	margin-top: 0;
+}
+
+#sankeyContainer {
+	width: 1200px;
+	height: 610px;
+	border: solid;
+	/*background-image: url('images/ford-fiesta.png');*/
+	background-repeat: no-repeat;
+	background-position: center; 
+}
+
+#sankey {
+	float: left;
+	overflow: hidden;
+	width: 600px;
+	height: 610px;
+}
+
+#description {
+	overflow: hidden;
+	background-color: #ffead490;
+	width: 210px;
+	height: 210px;
+	display: flex;
+	align-items: center;
+	margin-top: auto;
+	margin-bottom: auto;
+}
+
+html,
+body {
+	margin: 0;
+	font-family: "ff-meta-web-pro", sans-serif;
+	text-rendering: optimizeLegibility;
+	font-size: 100%;
+	line-height: 26px;
+	background: #f6f4f4;
+}
+
+#finalEnergy {
+	color: #f55050;
+}
+
+.descriptionValue {
+	color: #a52020;
+}
+
+#vehicleChoice {
+	overflow: hidden;
+}
+
+.vehicleButton {
+	background-color: #ffdab9;
+	padding: 5px;
+	margin: 5px;
+	float: left;
+	overflow: hidden;
 }
