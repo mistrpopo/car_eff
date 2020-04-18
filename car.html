@@ -11,18 +11,85 @@
   <body>
     <script type='text/javascript'>
 
+    //vehicle id to display name (in order to easily change name without changing the whole code)
+    var names = 
+    {
+      "fiesta": "Ford Fiesta",
+      "santaFe": "Hyundai Santa Fe",
+      "model3": "Tesla Model 3"
+    };
+
+    //vehicle id to engine "id" (I don't have the true engine efficiency of each engine, so I'm using a broad number for each one)
+    var types = 
+    {
+      "fiesta": "gasoline",
+      "santaFe": "gasoline",
+      "model3": "electric"
+    };
+
+    //link engine type to engine display name
+    var engineTypeNames = 
+    {
+      "gasoline": "Gasoline (ICE)",
+      "diesel": "Diesel",
+      "electric": "Electric"
+    };
+
+    //vehicle weight
+    var weights = 
+    {
+      "fiesta": 1165,
+      "santaFe": 1850,
+      "Audi A3 Diesel": 0,
+      "model3": 1700,
+      "Nissan leaf": 0,
+      "Renault Twizy": 0,
+      "Electric bike": 0
+      //todo motorbike
+    };
+
+    var engineEfficiencies = 
+    {
+      "gasoline": 0.2, //https://en.wikipedia.org/wiki/Petrol_engine#Speed_and_efficiency
+      "diesel": 0.4, //https://en.wikipedia.org/wiki/Diesel_engine#Efficiency
+      "electric": 0.9 //https://www.lesnumeriques.com/voiture/qu-faut-savoir-sur-moteur-voitures-electriques-a3681.html
+    };
+    
     function init() {
+      initDocument();
+      initSankey();
+    }
+ 
+    function initDocument() {
+      for (const [key, value] of Object.entries(names)) {
+        var newDiv = $('<div/>', {
+          id: key,
+          className: 'vehicleButton',
+          html: value
+        });
+        alert(newDiv);
+        newDiv.click(function() {
+          onClickVehicleButton(this);
+        });
+        $("#vehicleChoice").append(newDiv);
+        alert(document.getElementById("vehicleChoice").innerText);
+      }
+    }
+
+    function initSankey() {
       var sankey = new Sankey();
       /*
         TODO
         - sankey : 
           OK - thinner bars overall
           - additional large, colored bars for the right-side (waste/move car/move human)
+          - no transparency for the bars
         - technical car description :
-          - name
-          - engine type (gasoline, diesel, gas(?), electric)
-          - engine rated efficiency (add note about diesel exhaust 3-8x more NOx and 8-10x more thin particles - and Non-exhaust emissions (NEE) thought to be many times higher than exhaust emissions)
-          - weight
+          OK - name
+          OK - engine type (gasoline, diesel, gas(?), electric)
+          OK - engine rated efficiency 
+          - add note about diesel exhaust 3-8x more NOx and 8-10x more thin particles - and Non-exhaust emissions (NEE) thought to be many times higher than exhaust emissions)
+          OK - weight
         - add note about limitations :
           - losses in crude oil extraction/transport/storage/refining/gasoline domestic transport/storage not counted (petrol EROI is 10~30)
           - losses during battery charge not counted (20~30%) or grid loss (5~10%)
@@ -30,23 +97,7 @@
       */
 
 
-      var weights = 
-      {
-        "Ford Fiesta": 1165,
-        "Hyundai Santa Fe": 1850,
-        "Audi A3 Diesel": 0,
-        "Tesla Model 3": 0,
-        "Nissan leaf": 0,
-        "Renault Twizy": 0,
-        "Electric bike": 0
-      };
 
-      var engineEfficiencies = 
-      {
-        "gasoline": 0.2, //https://en.wikipedia.org/wiki/Petrol_engine#Speed_and_efficiency
-        "diesel": 0.4, //https://en.wikipedia.org/wiki/Diesel_engine#Efficiency
-        "electric": 0.9 //https://www.lesnumeriques.com/voiture/qu-faut-savoir-sur-moteur-voitures-electriques-a3681.html
-      };
 
       var petrol = "Petroleum";
       var waste = "Waste heat";
@@ -55,10 +106,8 @@
       var moveHuman = "Move the human";
 
       var engineEfficiency = engineEfficiencies["gasoline"];
-      var carWeight = weights["Ford Fiesta"];
+      var carWeight = weights["fiesta"];
       var humanWeight = 70;
-
-
       var contentWeight = humanWeight * 1;
       var weightEfficiency = contentWeight / (contentWeight + carWeight);
 
@@ -146,15 +195,15 @@
         <ul>
           <li>
             <span class='descriptionLabel'>Name:</span>
-            <span class='descriptionValue' id='name'>Ford Fiesta</span>
+            <span class='descriptionValue' id='vehicleName'>Ford Fiesta</span>
           </li> 
           <li>
             <span class='descriptionLabel'>Type:</span>
-            <span class='descriptionValue' id='type'>Urban car (ICE)</span>
+            <span class='descriptionValue' id='vehicleType'>Urban car (ICE)</span>
           </li> 
           <li>
             <span class='descriptionLabel'>Weight:</span>
-            <span class='descriptionValue' id='weight'>1165kg</span>
+            <span class='descriptionValue' id='vehicleWeight'>1165kg</span>
           </li> 
           <li>
             <span class='descriptionLabel'>Engine efficiency:</span>
@@ -167,14 +216,36 @@
           </li> 
         </ul>
       </div>
-   </div>
-   <div id='vehicleChoice'>
-    <div class='vehicleButton' id='fiesta'>
-      Ford Fiesta
     </div>
-    <div class='vehicleButton' id='santaFe'>
-      Hyundai Santa Fe
+    <div id='vehicleChoice'>
     </div>
-   </div>
+
+    <script type = "text/javascript">
+    function updateDescription(vehicleId) {
+      var engineId = types[buttonId];
+      $("#vehicleName").html(names[buttonId]);
+      $("#vehicleType").html(engineTypeNames[engineId]);
+      var carWeight = weights[buttonId];
+      $("#vehicleWeight").html(carWeight + "kg");
+      var engineEfficiency = engineEfficiencies[engineId];
+      $("#engineEfficiency").html(engineEfficiency * 100 + "%");
+      var humanWeight = 70;
+      var contentWeight = humanWeight * 1;
+      var weightEfficiency = contentWeight / (contentWeight + carWeight);
+      var overallEfficiency = engineEfficiency * weightEfficiency;
+      overallEfficiency = Math.round(overallEfficiency*10000)/10000;
+        $("#overallEfficiency").html(overallEfficiency * 100 + "%");
+    }
+
+    function updateSankey(vehicleId) {
+      //TODO
+    }
+
+    function onClickVehicleButton(button) {
+      var buttonId = button.id;
+      updateDescription(buttonId);
+      updateSankey(buttonId);
+    }
+    </script>
   </body>
 </html>
